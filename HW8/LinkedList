@@ -1,0 +1,293 @@
+/**
+ * LinkedList class that implements list and queue to make a generic form of linked list.
+ *
+ * @param <T> generic form T
+ * @author Jun Yeop Kim
+ * @version 1.0
+ */
+public class LinkedList<T> implements List<T>, Queue<T> {
+    private Node<T> head;
+    private Node<T> tail;
+
+    /**
+     * Constructor that makes head and tail null.
+     */
+    public LinkedList() {
+        head = null;
+        tail = null;
+    }
+
+    /**
+     * Returns the string representation of class.
+     *
+     * @return string that represents class
+     */
+    @Override
+    public String toString() {
+        if (head == null) {
+            return "";
+        }
+        String s = "[";
+        Node<T> temp = head;
+        while (temp.getNext() != null) {
+            s += temp.getData() + "] --> [";
+            temp = temp.getNext();
+        }
+        s += temp.getData();
+        return s + "]";
+    }
+
+    /**
+     * Returns true if empty and false if not empty.
+     *
+     * @return true or false
+     */
+    @Override
+    public boolean isEmpty() {
+        if (head == null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns the size of the linked list.
+     *
+     * @return the size of the linked list
+     */
+    @Override
+    public int size() {
+        int count = 0;
+        Node<T> temp = head;
+        while (temp != null) {
+            temp = temp.getNext();
+            count++;
+        }
+
+        return count;
+    }
+
+    /**
+     * Method adding data to the certain index of the linked list.
+     *
+     * @param index the index of the linked list
+     * @param data  data that will be added in generic form
+     */
+    @Override
+    public void add(int index, T data) {
+        if (index < 0 || index > size()) {
+            throw new IllegalArgumentException("Invalid index!");
+        }
+        if (data == null) {
+            throw new NullPointerException("Data passed in is null.");
+        }
+        Node<T> newNode = new Node<>(data);
+        if (index == 0) {
+            newNode.setNext(head);
+            head = newNode;
+            if (tail == null) {
+                tail = head;
+            }
+        } else if (index >= size()) {
+            addToBack(data);
+        } else {
+            Node<T> current = head;
+            for (int i = 1; i < index; i++) {
+                current = current.getNext();
+            }
+            Node<T> temp = current.getNext();
+            current.setNext(newNode);
+            (current.getNext()).setNext(temp);
+        }
+    }
+
+    /**
+     * Method adding data to the end of the linked list.
+     *
+     * @param data data that will be added in generic form
+     */
+    @Override
+    public void addToBack(T data) {
+        if (data == null) {
+            throw new NullPointerException("Data passed in is null.");
+        }
+        Node<T> newNode = new Node<>(data);
+        if (tail == null) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail.setNext(newNode);
+            tail = newNode;
+        }
+    }
+
+    /**
+     * Method removing data from a certain index of the linked list.
+     *
+     * @param index the index of the linked list
+     */
+    @Override
+    public T remove(int index) {
+        if (isEmpty()) {
+            throw new IllegalArgumentException("Invalid index!");
+        }
+        if (index < 0 || index >= size()) {
+            throw new IllegalArgumentException("Invalid index!");
+        }
+        if (index == 0) {
+            Node<T> temp = head;
+            head = temp.getNext();
+            if (head == null) {
+                tail = null;
+            }
+            return temp.getData();
+        } else if (index == size() - 1) {
+            Node<T> current = head;
+            for (int i = 0; i < size() - 2; i++) {
+                current = current.getNext();
+            }
+            Node<T> temp = tail;
+            tail = current;
+            tail.setNext(null);
+            return temp.getData();
+        } else {
+            Node<T> prev = head;
+            for (int i = 1; i < index; i++) {
+                prev = prev.getNext();
+            }
+            Node<T> current = prev.getNext();
+            prev.setNext(current.getNext());
+            return current.getData();
+        }
+    }
+
+    /**
+     * Method searching data from a certain index of the linked list.
+     *
+     * @param index the index of the linked list
+     */
+    @Override
+    public T get(int index) {
+        if (isEmpty() || index < 0 || index >= size()) {
+            throw new IllegalArgumentException("Invalid index!");
+        }
+        Node<T> current = head;
+        for (int i = 0; i < index; i++) {
+            current = current.getNext();
+        }
+        return current.getData();
+    }
+
+    /**
+     * Method setting the data of a certain index to a different one.
+     *
+     * @param index the index of the linked list
+     * @param data  data that will be added in generic form
+     * @return the origianl value before replaced
+     */
+    @Override
+    public T set(int index, T data) {
+        if (isEmpty() || index < 0 || index >= size()) {
+            throw new IllegalArgumentException("Invalid index!");
+        } else if (data == null) {
+            throw new NullPointerException("Data passed in is null.");
+        }
+        Node<T> newNode = new Node<>(data);
+        if (index == 0) {
+            T temp = head.getData();
+            head.setData(newNode.getData());
+            return temp;
+        } else if (index == size() - 1) {
+            T temp = tail.getData();
+            tail.setData(newNode.getData());
+            return temp;
+        } else {
+            Node<T> current = head;
+            for (int i = 0; i < index; i++) {
+                current = current.getNext();
+            }
+            T temp = current.getData();
+            current.setData(newNode.getData());
+            return temp;
+        }
+    }
+
+    /**
+     * Method checking if the data is inside the linked list.
+     *
+     * @param data data that will be checked
+     * @return true or false
+     */
+    @Override
+    public boolean contains(T data) {
+        if (data == null) {
+            throw new NullPointerException("Null data cannot be in list");
+        }
+        Node<T> current = head;
+        for (int i = 0; i < size(); i++) {
+            if (current.getData().equals(data)) {
+                return true;
+            } else {
+                current = current.getNext();
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Method removing all of the elements of the linked list.
+     */
+    @Override
+    public void clear() {
+        while (size() > 0) {
+            remove(0);
+        }
+    }
+
+    /**
+     * Method making a new linked list that only contains the odd index of the origianl.
+     */
+    @Override
+    public List<T> subOddList() {
+        if (isEmpty()) {
+            throw new IllegalArgumentException("List is empty");
+        }
+        List<T> tempList = new LinkedList<>();
+        int cnt = 0;
+        for (int i = 0; i < size(); i++) {
+            if (i % 2 != 0) {
+                tempList.add(cnt, get(i));
+                cnt++;
+            }
+        }
+        return tempList;
+    }
+
+
+    /**
+     * Method adding data to the end of the stack.
+     *
+     * @param data data that will be added in generic form
+     */
+    @Override
+    public void enqueue(T data) {
+        if (data == null) {
+            throw new NullPointerException("Data passed in is null");
+        }
+        addToBack(data);
+    }
+
+    /**
+     * Method removing data from the beginning of the stack.
+     *
+     * @return the removed data, which is the first index's data
+     */
+    @Override
+    public T dequeue() {
+        if (isEmpty()) {
+            throw new NullPointerException("Empty queue.");
+        }
+        return remove(0);
+    }
+}
